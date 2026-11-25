@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নদীপাড়ার খবর | সত্য, স্পষ্ট, সবার জন্য</title>
+    
+    <!-- Google Fonts: Noto Serif Bengali for headlines, Noto Sans Bengali for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;700&family=Noto+Serif+Bengali:wght@400;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --bg-color: #fbfaf7;
+            --text-color: #1c1917;
+            --text-muted: #57534e;
+            --card-bg: #ffffff;
+            --border-color: #e7e5e4;
+            --primary-color: #0e6b5c;
+            --primary-hover: #0a574a;
+            --breaking-color: #c2410c;
+            --ticker-bg: #f5f5f4;
+            --shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #171717;
+            --text-color: #e7e5e4;
+            --text-muted: #a8a29e;
+            --card-bg: #202020;
+            --border-color: #404040;
+            --primary-color: #149c86;
+            --primary-hover: #1acab0;
+            --breaking-color: #ea580c;
+            --ticker-bg: #262626;
+            --shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+            color-scheme: light dark; 
+        }
+
+        body {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.75;
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+        ul { list-style: none; }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Serif Bengali', serif;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text-color);
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        a:focus-visible, button:focus-visible, input:focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        .section-title {
+            font-size: 1.45rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.45rem;
+            margin-bottom: 1.25rem;
+            display: inline-block;
+        }
+        .bg-card {
+            background-color: var(--card-bg);
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+        .img-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 3px;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: flex-end;
+            padding: 0.75rem;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+        .cat-tag {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.4rem;
+            display: inline-block;
+        }
+        .time-stamp { font-size: 0.85rem; color: var(--text-muted); }
+        .hidden { display: none !important; }
+
+        /* --- 1. TOP BAR --- */
+        .top-bar {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+        .top-bar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+        .theme-toggle:hover { background-color: var(--ticker-bg); }
+
+        /* --- 2. MASTHEAD --- */
+        .masthead { padding: 1.75rem 0; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .site-title { font-size: 3.2rem; font-weight: 800; color: var(--primary-color); letter-spacing: -0.5px; }
+        .site-tagline { font-size: 1.05rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+        /* --- 3. CATEGORY NAV --- */
+        .main-nav {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+        .nav-list {
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .nav-list::-webkit-scrollbar { display: none; }
+        .nav-item a {
+            display: block;
+            padding: 0.9rem 1rem;
+            font-weight: 500;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+        .nav-item a:hover, .nav-item a.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        .nav-search {
+            padding: 0.45rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 0.9rem;
+            width: 180px;
+            flex-shrink: 0;
+        }
+
+        /* --- 4. HEADLINE TICKER --- */
+        .ticker-strip {
+            background-color: var(--ticker-bg);
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+        .ticker-label {
+            background-color: var(--breaking-color);
+            color: #ffffff;
+            padding: 2px 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 2px;
+            white-space: nowrap;
+        }
+        .ticker-content {
+            font-weight: 500;
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .ticker-content a:hover { color: var(--primary-color); text-decoration: underline; }
+
+        /* --- 5. MAIN GRID LAYOUT --- */
+        .main-content { padding: 1.75rem 0; }
+        .layout-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.75rem; }
+
+        .lead-story { margin-bottom: 1.75rem; }
+        .lead-story h1 { font-size: 2.1rem; margin: 0.35rem 0 0.65rem; }
+        .lead-story a:hover h1 { color: var(--primary-color); }
+        .lead-summary { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 0.6rem; }
+
+        .sub-stories-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+        .sub-story h3 { font-size: 1.12rem; margin-top: 0.3rem; }
+        .sub-story a:hover h3 { color: var(--primary-color); }
+
+        .sidebar-section { margin-bottom: 1.75rem; }
+        .latest-list li, .popular-list li {
+            padding: 0.85rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .latest-list li:last-child, .popular-list li:last-child { border-bottom: none; }
+        .latest-list li a { display: block; font-weight: 500; }
+        .latest-list li a:hover { color: var(--primary-color); }
+        
+        .popular-list { counter-reset: pop; list-style: none; }
+        .popular-list li { display: flex; gap: 0.9rem; align-items: flex-start; }
+        .popular-list li::before {
+            counter-increment: pop;
+            content: counter(pop, bengali);
+            font-family: 'Noto Serif Bengali', serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            line-height: 1.1;
+        }
+        .popular-list li a { font-weight: 500; flex: 1; }
+        .popular-list li a:hover { color: var(--primary-color); }
+
+        /* --- 6. THREE COLUMN CATEGORIES --- */
+        .cat-sections { padding-bottom: 2.5rem; }
+        .cat-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
+        .cat-large-story { margin-bottom: 1rem; }
+        .cat-large-story h3 { font-size: 1.28rem; margin-top: 0.35rem; }
+        .cat-large-story a:hover h3 { color: var(--primary-color); }
+        .cat-text-story { padding: 0.85rem 1rem; }
+        .cat-text-story h4 { font-size: 1.05rem; margin-bottom: 0.35rem; }
+        .cat-text-story a:hover h4 { color: var(--primary-color); }
+
+        /* --- 7. FOOTER --- */
+        footer {
+            background-color: var(--card-bg);
+            border-top: 2px solid var(--primary-color);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: auto;
+            font-size: 0.92rem;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 0.85rem; flex-wrap: wrap; }
+        .footer-links a:hover { color: var(--primary-color); }
+
+        /* --- ARTICLE & FILTER VIEW --- */
+        #article-view { padding: 2rem 0 3rem; }
+        .article-headline { font-size: 2.3rem; margin-bottom: 0.85rem; }
+        .article-meta {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .article-body { font-size: 1.12rem; line-height: 1.85; }
+        .article-body p { margin-bottom: 1.35rem; }
+        .back-btn {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 0.55rem 1.2rem;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .back-btn:hover { background-color: var(--primary-hover); }
+
+        .filter-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 992px) {
+            .layout-grid, .cat-grid-3 { grid-template-columns: 1fr; }
+            .site-title { font-size: 2.5rem; }
+            .sub-stories-row { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            html { font-size: 15px; }
+            .container { width: 94%; }
+            .sub-stories-row, .filter-grid { grid-template-columns: 1fr; }
+            .masthead { padding: 1.2rem 0; }
+            .site-title { font-size: 2.1rem; }
+            .lead-story h1 { font-size: 1.65rem; }
+            .article-headline { font-size: 1.75rem; }
+            .nav-search { width: 130px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Top Bar -->
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <span id="current-date"></span>
+            <button class="theme-toggle" id="theme-toggle" aria-label="রঙের মোড পরিবর্তন করুন">ডার্ক মোড</button>
+        </div>
+    </div>
+
+    <!-- 2. Masthead -->
+    <header class="masthead">
+        <div class="container">
+            <a href="#" id="brand-link">
+                <h1 class="site-title">নদীপাড়ার খবর</h1>
+            </a>
+            <p class="site-tagline">সত্য, স্পষ্ট, সবার জন্য</p>
+        </div>
+    </header>
+
+    <!-- 3. Category Nav -->
+    <nav class="main-nav" aria-label="প্রধান বিভাগসমূহ">
+        <div class="container nav-inner">
+            <ul class="nav-list" id="category-nav"></ul>
+            <input type="search" id="site-search" class="nav-search" placeholder="শিরোনাম খুঁজুন..." aria-label="শিরোনাম অনুসন্ধান">
+        </div>
+    </nav>
+
+    <!-- 4. Headline Ticker -->
+    <div class="container">
+        <div class="ticker-strip">
+            <span class="ticker-label">শিরোনাম</span>
+            <div class="ticker-content" id="headline-ticker"></div>
+        </div>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div id="page-wrapper">
+        <!-- 5. Main Grid -->
+        <main class="main-content container" id="home-section">
+            <div class="layout-grid">
+                <div>
+                    <article class="lead-story bg-card" id="lead-story"></article>
+                    <div class="sub-stories-row" id="sub-stories"></div>
+                </div>
+
+                <aside>
+                    <div class="sidebar-section bg-card">
+                        <h2 class="section-title">সর্বশেষ</h2>
+                        <ul class="latest-list" id="latest-news"></ul>
+                    </div>
+                    <div class="sidebar-section bg-card">
+                        <h2 class="section-title">সবচেয়ে পঠিত</h2>
+                        <ul class="popular-list" id="popular-news"></ul>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <!-- 6. Three-Column Category Sections -->
+        <section class="cat-sections container" id="cat-sections">
+            <div class="cat-grid-3" id="cat-grid-container"></div>
+        </section>
+
+        <!-- Article Detail & Search/Category Filter View -->
+        <section id="article-view" class="container hidden"></section>
+    </div>
+
+    <!-- 7. Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="#">আমাদের সম্পর্কে</a></li>
+                <li><a href="#">সম্পাদকীয় নীতিমালা</a></li>
+                <li><a href="#">যোগাযোগ</a></li>
+                <li><a href="#">গোপনীয়তা নীতি</a></li>
+            </ul>
+            <p>&copy; ২০২৬ নদীপাড়ার খবর। সর্বস্বত্ব সংরক্ষিত।</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- BENGALI NUMBER HELPER ---
+        function toBengaliDigits(num) {
+            const digits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return String(num).replace(/\d/g, d => digits[d]);
+        }
+
+        // --- REALISTIC BENGALI NEWS ARTICLES DATA ---
+        const categories = ['প্রচ্ছদ', 'বাংলাদেশ', 'রাজনীতি', 'অর্থনীতি', 'খেলা', 'বিশ্ব', 'বিনোদন', 'প্রযুক্তি', 'মতামত'];
+
+        const articles = [
+            {
+                id: 1,
+                category: 'বাংলাদেশ',
+                headline: 'পদ্মা-মেঘনা অববাহিকায় নাব্যতা ফেরাতে নতুন ড্রেজিং প্রকল্প অনুমোদন',
+                summary: 'সারা বছর নৌযান চলাচল স্বাভাবিক রাখতে এবং নদীভাঙন রোধে ১২টি গুরুত্বপূর্ণ নৌরুটে আধুনিক খননকাজ শুরু হচ্ছে আগামী মাসেই।',
+                body: 'নৌপরিবহন মন্ত্রণালয়ের নতুন এই মহাপরিকল্পনার আওতায় দেশের দক্ষিণাঞ্চলের সাথে রাজধানীর নৌযোগাযোগ আরও নিরাপদ ও দ্রুততর হবে। বিশেষজ্ঞরা বলছেন, শুষ্ক মৌসুমে নাব্যতা সংকটের কারণে পণ্যবাহী জাহাজ চলাচলে যে বিঘ্ন ঘটত, তা এই প্রকল্পের মাধ্যমে অনেকাংশে কমে আসবে।
+
+প্রকল্প পরিচালক জানিয়েছেন, আধুনিক জিপিএস-নিয়ন্ত্রিত ড্রেজার ব্যবহার করে নদীর গতিপথ ঠিক রাখা হবে এবং উত্তোলিত বালু পরিকল্পিতভাবে তীর রক্ষার কাজে ব্যবহৃত হবে। স্থানীয় মৎস্যজীবী ও নৌযান চালকরা এই সিদ্ধান্তকে স্বাগত জানিয়েছেন।',
+                gradient: 'linear-gradient(135deg, #0e6b5c 0%, #1d4ed8 100%)',
+                caption: 'নদী খনন ও নৌপথ উন্নয়ন প্রকল্পের নকশা চিত্র',
+                minutesAgo: 8,
+                views: 4820,
+                isBreaking: true
+            },
+            {
+                id: 2,
+                category: 'অর্থনীতি',
+                headline: 'চলতি অর্থবছরে কৃষি ও প্রক্রিয়াজাত খাদ্য রপ্তানিতে নতুন রেকর্ড',
+                summary: 'ইউরোপ ও মধ্যপ্রাচ্যের বাজারে দেশীয় সবজি, মসলা ও শুকনো খাবারের চাহিদা বাড়ায় রপ্তানি আয় বেড়েছে ১৮ শতাংশ।',
+                body: 'রপ্তানি উন্নয়ন ব্যুরোর সর্বশেষ প্রতিবেদনে দেখা গেছে, প্রচলিত পোশাক খাতের পাশাপাশি কৃষি প্রক্রিয়াজাত পণ্য এখন বৈদেশিক মুদ্রা অর্জনের অন্যতম প্রধান উৎসে পরিণত হচ্ছে। মানসম্মত প্যাকেজিং ও আন্তর্জাতিক মানদণ্ড বজায় রাখায় নতুন ক্রেতা দেশ যুক্ত হচ্ছে।
+
+উদ্যোক্তারা জানান, হিমাগার সুবিধা ও কার্গো বিমানের ভাড়া কিছুটা কমানো গেলে আগামী দুই বছরে এই খাতের আয় দ্বিগুণ করা সম্ভব।',
+                gradient: 'linear-gradient(135deg, #15803d 0%, #ca8a04 100%)',
+                caption: 'রপ্তানিযোগ্য কৃষিপণ্য প্রক্রিয়াজাতকরণ কেন্দ্র',
+                minutesAgo: 15,
+                views: 3910,
+                isBreaking: true
+            },
+            {
+                id: 3,
+                category: 'খেলা',
+                headline: 'চট্টগ্রাম টেস্টে স্পিনারদের দাপটে চালকের আসনে স্বাগতিকরা',
+                summary: 'তৃতীয় দিনের শেষ বিকেলে প্রতিপক্ষের ৬ উইকেট তুলে নিয়ে জয়ের সুবাস পাচ্ছে বাংলাদেশ দল।',
+                body: 'সাগরিকার ঘূর্ণি উইকেটে দ্বিতীয় ইনিংসে ব্যাট করতে নেমে শুরু থেকেই চাপে পড়ে সফরকারী ব্যাটাররা। বাঁহাতি স্পিনারদের নিখুঁত লাইন ও লেংথের সামনে কোনো জুটিই স্থায়ী হতে পারেনি।
+
+দিন শেষে সংবাদ সম্মেলনে দলের প্রতিনিধি জানান, চতুর্থ দিনের প্রথম সেশনেই বাকি উইকেটগুলো তুলে নিয়ে ম্যাচ শেষ করতে চান তারা। গ্যালারিতে উপস্থিত দর্শকদের উচ্ছ্বাস ছিল চোখে পড়ার মতো।',
+                gradient: 'linear-gradient(135deg, #047857 0%, #0f172a 100%)',
+                caption: 'চট্টগ্রাম স্টেডিয়ামে তৃতীয় দিনের খেলার মুহূর্ত',
+                minutesAgo: 22,
+                views: 5410,
+                isBreaking: false
+            },
+            {
+                id: 4,
+                category: 'প্রযুক্তি',
+                headline: 'বাংলা ভাষার কণ্ঠস্বর শনাক্তকরণে দেশীয় গবেষকদের নতুন এআই মডেল',
+                summary: 'আঞ্চলিক উচ্চারণসহ নির্ভুলভাবে বাংলা কথাকে লেখায় রূপান্তর করতে সক্ষম এই সফটওয়্যার উন্মুক্ত করা হয়েছে।',
+                body: 'দেশের তিনটি বিশ্ববিদ্যালয়ের তরুণ গবেষকদের যৌথ প্রচেষ্টায় তৈরি এই কৃত্রিম বুদ্ধিমত্তা মডেলটি সিলেটি, চাটগাঁইয়া ও বরিশালের আঞ্চলিক টানও সহজে বুঝতে পারে। দাপ্তরিক নথি তৈরি ও দৃষ্টিপ্রতিবন্ধী শিক্ষার্থীদের পড়াশোনায় এটি বড় ভূমিকা রাখবে।
+
+গবেষক দল জানিয়েছে, সাধারণ ব্যবহারকারী ও ডেভেলপারদের জন্য এর এপিআই বিনামূল্যে ব্যবহারের সুযোগ রাখা হয়েছে।',
+                gradient: 'linear-gradient(135deg, #312e81 0%, #0e6b5c 100%)',
+                caption: 'বাংলা ভাষাভিত্তিক কৃত্রিম বুদ্ধিমত্তা গবেষণাগার',
+                minutesAgo: 31,
+                views: 3120,
+                isBreaking: false
+            },
+            {
+                id: 5,
+                category: 'রাজনীতি',
+                headline: 'স্থানীয় সরকার শক্তিশালীকরণে সর্বদলীয় সংলাপের আহ্বান বিশিষ্টজনদের',
+                summary: 'ইউনিয়ন ও পৌরসভা পর্যায়ে আর্থিক স্বচ্ছতা ও নাগরিক সেবা নিশ্চিতে নীতিগত সংস্কারের প্রস্তাব দেওয়া হয়েছে।',
+                body: 'রাজধানীতে আয়োজিত এক গোলটেবিল বৈঠকে নাগরিক সমাজের প্রতিনিধিরা বলেন, উন্নয়ন কর্মকাণ্ডে জনগণের সরাসরি অংশগ্রহণ নিশ্চিত করতে স্থানীয় প্রতিষ্ঠানগুলোকে আরও কার্যকর করতে হবে।
+
+বক্তারা বাজেট বরাদ্দে স্বচ্ছতা এবং নিয়মিত জবাবদিহিমূলক জনশুনানি আয়োজনের ওপর গুরুত্বারোপ করেন।',
+                gradient: 'linear-gradient(135deg, #7c2d12 0%, #1e293b 100%)',
+                caption: 'ঢাকায় আয়োজিত নীতি সংলাপ অনুষ্ঠান',
+                minutesAgo: 40,
+                views: 2740,
+                isBreaking: false
+            },
+            {
+                id: 6,
+                category: 'বিশ্ব',
+                headline: 'নবায়নযোগ্য জ্বালানি ব্যবহারে এশিয়ার দেশগুলোর নতুন আঞ্চলিক জোট',
+                summary: 'সৌর ও বায়ুবিদ্যুৎ প্রযুক্তি বিনিময় এবং গ্রিন ফান্ড গঠনে একমত হয়েছে ১২টি দেশ।',
+                body: 'জলবায়ু পরিবর্তনের ঝুঁকি মোকাবিলায় জীবাশ্ম জ্বালানির ওপর নির্ভরতা কমাতে এশিয়ার উদীয়মান অর্থনীতির দেশগুলো নতুন এই উদ্যোগ নিয়েছে। এর ফলে সদস্য দেশগুলো স্বল্প সুদে সবুজ প্রযুক্তিতে বিনিয়োগের সুযোগ পাবে।
+
+বিশ্লেষকরা মনে করছেন, আঞ্চলিক বিদ্যুৎ গ্রিড সংযুক্ত হলে নবায়নযোগ্য বিদ্যুতের অপচয় কমবে এবং ব্যয় সাশ্রয় হবে।',
+                gradient: 'linear-gradient(135deg, #0369a1 0%, #065f46 100%)',
+                caption: 'আন্তর্জাতিক নবায়নযোগ্য জ্বালানি সম্মেলন',
+                minutesAgo: 47,
+                views: 2290,
+                isBreaking: false
+            },
+            {
+                id: 7,
+                category: 'বাংলাদেশ',
+                headline: 'উত্তরাঞ্চলে আগাম শীতকালীন সবজির বাম্পার ফলন, হাসি ফুটেছে কৃষকের মুখে',
+                summary: 'অনুকূল আবহাওয়া ও সময়মতো সার পাওয়ায় ফুলকপি, বাঁধাকপি ও শিমের ভালো দাম পাচ্ছেন চাষিরা।',
+                body: 'বগুড়া, রংপুর ও দিনাজপুরের পাইকারি বাজারগুলোতে ভোর থেকেই সবজি বোঝাই ট্রাকের ভিড় দেখা যাচ্ছে। স্থানীয় চাহিদা মিটিয়ে এসব সবজি প্রতিদিন ঢাকা ও চট্টগ্রামে পাঠানো হচ্ছে।
+
+কৃষি সম্প্রসারণ অধিদপ্তর জানিয়েছে, এ বছর জৈব সার ও পোকা দমনে পরিবেশবান্ধব পদ্ধতির ব্যবহার বাড়ায় উৎপাদন খরচ কিছুটা কমেছে।',
+                gradient: 'linear-gradient(135deg, #166534 0%, #4d7c0f 100%)',
+                caption: 'উত্তরাঞ্চলের সবজি খেত ও পাইকারি বাজার',
+                minutesAgo: 55,
+                views: 1980,
+                isBreaking: false
+            },
+            {
+                id: 8,
+                category: 'খেলা',
+                headline: 'জাতীয় স্কুল ফুটবল চ্যাম্পিয়নশিপের চূড়ান্ত পর্ব শুরু হচ্ছে শুক্রবার',
+                summary: 'আট বিভাগের সেরা ১৬টি স্কুল দল নিয়ে কমলাপুর স্টেডিয়ামে অনুষ্ঠিত হবে সপ্তাহব্যাপী এই আসর।',
+                body: 'তৃণমূল পর্যায় থেকে প্রতিভাবান ফুটবলার তুলে আনার লক্ষ্যে বাংলাদেশ ফুটবল ফেডারেশন এই টুর্নামেন্টের আয়োজন করছে। প্রতিটি ম্যাচ থেকে সেরা খেলোয়াড়দের বাছাই করে দীর্ঘমেয়াদী প্রশিক্ষণ ক্যাম্পে নেওয়া হবে।
+
+উদ্বোধনী ম্যাচে মুখোমুখি হবে রাজশাহী ও খুলনা অঞ্চলের চ্যাম্পিয়ন দল।',
+                gradient: 'linear-gradient(135deg, #0e6b5c 0%, #b45309 100%)',
+                caption: 'জাতীয় স্কুল ফুটবল ট্রফি উন্মোচন',
+                minutesAgo: 64,
+                views: 1650,
+                isBreaking: false
+            },
+            {
+                id: 9,
+                category: 'বিশ্ব',
+                headline: 'আর্কটিক অঞ্চলে বরফ গলার হার নিয়ে বিজ্ঞানীদের নতুন সতর্কবার্তা',
+                summary: 'গত দশকের তুলনায় গ্রীষ্মকালীন সমুদ্রের বরফ স্তর আরও দ্রুত সংকুচিত হচ্ছে বলে উপগ্রহ চিত্রে উঠে এসেছে।',
+                body: 'আন্তর্জাতিক জলবায়ু গবেষণা কেন্দ্রের বিজ্ঞানীরা জানিয়েছেন, মেরু অঞ্চলের তাপমাত্রা বৈশ্বিক গড়ের চেয়ে প্রায় তিনগুণ দ্রুত বাড়ছে। এর সরাসরি প্রভাব পড়ছে উপকূলীয় দেশগুলোর সমুদ্রপৃষ্ঠের উচ্চতায়।
+
+কার্বন নিঃসরণ কমাতে উন্নত দেশগুলোকে দেওয়া প্রতিশ্রুতি দ্রুত বাস্তবায়নের আহ্বান জানিয়েছেন গবেষকরা।',
+                gradient: 'linear-gradient(135deg, #1e3a8a 0%, #0f766e 100%)',
+                caption: 'উপগ্রহ চিত্রে উত্তর মেরুর বরফ স্তরের পরিবর্তন',
+                minutesAgo: 75,
+                views: 1840,
+                isBreaking: false
+            },
+            {
+                id: 10,
+                category: 'বিনোদন',
+                headline: 'লোকসংগীত উৎসবে মাতল রাজধানী, তিন দিনব্যাপী আসরে গাইবেন ৫০ শিল্পী',
+                summary: 'ভাওয়াইয়া, ভাটিয়ালি ও লালনগীতির সুরে মুখরিত আর্মি স্টেডিয়াম প্রাঙ্গণ।',
+                body: 'বাংলার শেকড়ের গান নতুন প্রজন্মের কাছে পৌঁছে দিতে শুরু হয়েছে বার্ষিক লোকসংগীত উৎসব। প্রথম সন্ধ্যাতেই দর্শকদের উপচে পড়া ভিড় দেখা গেছে।
+
+আয়োজকরা জানান, দেশের প্রত্যন্ত অঞ্চলের প্রবীণ লোকশিল্পীদের সম্মাননা প্রদান ও তাদের গান সংরক্ষণের উদ্যোগ নেওয়া হয়েছে এবারের আসরে।',
+                gradient: 'linear-gradient(135deg, #831843 0%, #c2410c 100%)',
+                caption: 'লোকসংগীত উৎসবের উদ্বোধনী সন্ধ্যার মঞ্চ',
+                minutesAgo: 88,
+                views: 2150,
+                isBreaking: false
+            },
+            {
+                id: 11,
+                category: 'মতামত',
+                headline: 'শহরের গণপরিবহন ব্যবস্থায় শৃঙ্খলা ফেরাতে সমন্বিত পরিকল্পনা জরুরি',
+                summary: 'যানজট নিরসন ও যাত্রীদের ভোগান্তি কমাতে রুট র‍্যাশনালাইজেশন এবং ডিজিটাল টিকিটিং ব্যবস্থা পুরোপুরি চালু করতে হবে।',
+                body: 'প্রতিদিন কর্মঘণ্টার বড় একটি অংশ রাস্তায় নষ্ট হওয়ায় অর্থনৈতিক ক্ষতির পাশাপাশি মানুষের মানসিক স্বাস্থ্যও ক্ষতিগ্রস্ত হচ্ছে। বিচ্ছিন্নভাবে ফ্লাইওভার বা সড়ক প্রশস্ত করে দীর্ঘমেয়াদী সমাধান পাওয়া কঠিন।
+
+একমাত্র নির্ভরযোগ্য, সময়নিষ্ঠ ও নিরাপদ গণপরিবহন ব্যবস্থাই ব্যক্তিগত গাড়ির ব্যবহার কমিয়ে শহরকে বাসযোগ্য রাখতে পারে।',
+                gradient: 'linear-gradient(135deg, #334155 0%, #0e6b5c 100%)',
+                caption: 'নগর পরিবহন ও ট্রাফিক ব্যবস্থাপনা বিশ্লেষণ',
+                minutesAgo: 102,
+                views: 1520,
+                isBreaking: false
+            }
+        ];
+
+        // --- DOM ELEMENTS ---
+        const els = {
+            date: document.getElementById('current-date'),
+            nav: document.getElementById('category-nav'),
+            ticker: document.getElementById('headline-ticker'),
+            homeSec: document.getElementById('home-section'),
+            catSecs: document.getElementById('cat-sections'),
+            articleView: document.getElementById('article-view'),
+            lead: document.getElementById('lead-story'),
+            sub: document.getElementById('sub-stories'),
+            latest: document.getElementById('latest-news'),
+            popular: document.getElementById('popular-news'),
+            catGrid: document.getElementById('cat-grid-container'),
+            searchInput: document.getElementById('site-search'),
+            themeToggle: document.getElementById('theme-toggle'),
+            brandLink: document.getElementById('brand-link')
+        };
+
+        // 1. TODAY'S DATE IN BENGALI
+        els.date.textContent = new Date().toLocaleDateString('bn-BD', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // 2. RENDER CATEGORY NAVIGATION
+        function renderNav(activeCat = 'প্রচ্ছদ') {
+            els.nav.innerHTML = categories.map(cat => `
+                <li class="nav-item">
+                    <a href="#cat-${encodeURIComponent(cat)}" data-cat="${cat}" class="${cat === activeCat ? 'active' : ''}">${cat}</a>
+                </li>
+            `).join('');
+        }
+
+        // 3. RENDER TICKER
+        function renderTicker() {
+            const breakingList = articles.filter(a => a.isBreaking);
+            let idx = 0;
+            function updateTicker() {
+                const item = breakingList[idx % breakingList.length];
+                els.ticker.innerHTML = `<a href="#article-${item.id}">${item.headline}</a>`;
+                idx++;
+            }
+            updateTicker();
+            setInterval(updateTicker, 5000);
+        }
+
+        // 4. RENDER HOMEPAGE MAIN GRID
+        function renderHomepage() {
+            const lead = articles[0];
+            els.lead.innerHTML = `
+                <a href="#article-${lead.id}">
+                    <div class="img-placeholder" style="background: ${lead.gradient};">
+                        <span>${lead.caption}</span>
+                    </div>
+                    <span class="cat-tag">${lead.category}</span>
+                    <h1>${lead.headline}</h1>
+                    <p class="lead-summary">${lead.summary}</p>
+                    <span class="time-stamp">${toBengaliDigits(lead.minutesAgo)} মিনিট আগে</span>
+                </a>
+            `;
+
+            const subs = articles.slice(1, 4);
+            els.sub.innerHTML = subs.map(a => `
+                <article class="sub-story bg-card">
+                    <a href="#article-${a.id}">
+                        <div class="img-placeholder" style="background: ${a.gradient};">
+                            <span>${a.category}</span>
+                        </div>
+                        <span class="cat-tag">${a.category}</span>
+                        <h3>${a.headline}</h3>
+                        <span class="time-stamp" style="display:block; margin-top:0.4rem;">${toBengaliDigits(a.minutesAgo)} মিনিট আগে</span>
+                    </a>
+                </article>
+            `).join('');
+
+            const latestSorted = [...articles].sort((a, b) => a.minutesAgo - b.minutesAgo).slice(0, 6);
+            els.latest.innerHTML = latestSorted.map(a => `
+                <li>
+                    <a href="#article-${a.id}">${a.headline}</a>
+                    <span class="time-stamp">${toBengaliDigits(a.minutesAgo)} মিনিট আগে</span>
+                </li>
+            `).join('');
+
+            const popularSorted = [...articles].sort((a, b) => b.views - a.views).slice(0, 5);
+            els.popular.innerHTML = popularSorted.map(a => `
+                <li>
+                    <a href="#article-${a.id}">${a.headline}</a>
+                </li>
+            `).join('');
+        }
+
+        // 5. RENDER THREE-COLUMN CATEGORY SECTIONS
+        function renderCategorySections() {
+            const displayCats = ['বাংলাদেশ', 'খেলা', 'বিশ্ব'];
+            els.catGrid.innerHTML = displayCats.map(catName => {
+                const catArts = articles.filter(a => a.category === catName);
+                const imgStory = catArts[0];
+                const textStory = catArts[1] || catArts[0];
+
+                return `
+                    <div class="cat-block">
+                        <h2 class="section-title"><a href="#cat-${encodeURIComponent(catName)}">${catName}</a></h2>
+                        <article class="cat-large-story bg-card">
+                            <a href="#article-${imgStory.id}">
+                                <div class="img-placeholder" style="background: ${imgStory.gradient};">
+                                    <span>${imgStory.caption}</span>
+                                </div>
+                                <h3>${imgStory.headline}</h3>
+                                <span class="time-stamp" style="display:block; margin-top:0.35rem;">${toBengaliDigits(imgStory.minutesAgo)} মিনিট আগে</span>
+                            </a>
+                        </article>
+                        <article class="cat-text-story bg-card">
+                            <a href="#article-${textStory.id}">
+                                <h4>${textStory.headline}</h4>
+                                <p style="font-size:0.9rem; color:var(--text-muted);">${textStory.summary}</p>
+                            </a>
+                        </article>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 6. VIEWS: HOME, CATEGORY FILTER, LIVE SEARCH, ARTICLE DETAIL
+        function showHome() {
+            els.homeSec.classList.remove('hidden');
+            els.catSecs.classList.remove('hidden');
+            els.articleView.classList.add('hidden');
+            renderNav('প্রচ্ছদ');
+        }
+
+        function showCategory(catName) {
+            if (catName === 'প্রচ্ছদ') {
+                showHome();
+                return;
+            }
+            const filtered = articles.filter(a => a.category === catName);
+            els.homeSec.classList.add('hidden');
+            els.catSecs.classList.add('hidden');
+            els.articleView.classList.remove('hidden');
+            renderNav(catName);
+
+            els.articleView.innerHTML = `
+                <h2 class="section-title" style="font-size:1.85rem;">${catName}</h2>
+                <div class="filter-grid">
+                    ${filtered.map(a => `
+                        <article class="bg-card">
+                            <a href="#article-${a.id}">
+                                <div class="img-placeholder" style="background: ${a.gradient};">
+                                    <span>${a.caption}</span>
+                                </div>
+                                <h3 style="font-size:1.3rem; margin-bottom:0.4rem;">${a.headline}</h3>
+                                <p style="color:var(--text-muted); font-size:0.95rem;">${a.summary}</p>
+                                <span class="time-stamp" style="display:block; margin-top:0.5rem;">${toBengaliDigits(a.minutesAgo)} মিনিট আগে</span>
+                            </a>
+                        </article>
+                    `).join('')}
+                </div>
+                <a href="#" class="back-btn" id="back-to-home">← প্রচ্ছদে ফিরে যান</a>
+            `;
+            window.scrollTo(0, 0);
+        }
+
+        function showArticle(id) {
+            const art = articles.find(a => a.id === id);
+            if (!art) {
+                showHome();
+                return;
+            }
+            els.homeSec.classList.add('hidden');
+            els.catSecs.classList.add('hidden');
+            els.articleView.classList.remove('hidden');
+            renderNav(art.category);
+
+            const pubDate = new Date().toLocaleDateString('bn-BD', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            els.articleView.innerHTML = `
+                <article class="bg-card" style="padding: 1.75rem;">
+                    <span class="cat-tag">${art.category}</span>
+                    <h1 class="article-headline">${art.headline}</h1>
+                    <div class="article-meta">
+                        <span>প্রকাশিত: ${pubDate} (${toBengaliDigits(art.minutesAgo)} মিনিট আগে)</span>
+                        <span>পঠিত: ${toBengaliDigits(art.views)} বার</span>
+                    </div>
+                    <div class="img-placeholder" style="background: ${art.gradient}; margin-bottom: 1.5rem;">
+                        <span>${art.caption}</span>
+                    </div>
+                    <div class="article-body">
+                        ${art.body.split('
+
+').map(p => `<p>${p}</p>`).join('')}
+                    </div>
+                    <a href="#" class="back-btn" id="back-to-home">← প্রচ্ছদে ফিরে যান</a>
+                </article>
+            `;
+            window.scrollTo(0, 0);
+        }
+
+        // LIVE SEARCH
+        els.searchInput.addEventListener('input', (e) => {
+            const q = e.target.value.trim().toLowerCase();
+            if (!q) {
+                if (window.location.hash) {
+                    handleRoute();
+                } else {
+                    showHome();
+                }
+                return;
+            }
+
+            const matches = articles.filter(a =>
+                a.headline.toLowerCase().includes(q) ||
+                a.summary.toLowerCase().includes(q) ||
+                a.category.toLowerCase().includes(q)
+            );
+
+            els.homeSec.classList.add('hidden');
+            els.catSecs.classList.add('hidden');
+            els.articleView.classList.remove('hidden');
+
+            els.articleView.innerHTML = `
+                <h2 class="section-title">অনুসন্ধানের ফলাফল: "${e.target.value}" (${toBengaliDigits(matches.length)}টি)</h2>
+                ${matches.length === 0
+                    ? '<p class="bg-card">দুঃখিত, আপনার অনুসন্ধানের সাথে মিলে এমন কোনো সংবাদ পাওয়া যায়নি।</p>'
+                    : `<div class="filter-grid">
+                        ${matches.map(a => `
+                            <article class="bg-card">
+                                <a href="#article-${a.id}">
+                                    <span class="cat-tag">${a.category}</span>
+                                    <h3 style="font-size:1.25rem; margin-bottom:0.4rem;">${a.headline}</h3>
+                                    <p style="color:var(--text-muted); font-size:0.95rem;">${a.summary}</p>
+                                </a>
+                            </article>
+                        `).join('')}
+                    </div>`
+                }
+                <a href="#" class="back-btn" id="back-to-home">← প্রচ্ছদে ফিরে যান</a>
+            `;
+        });
+
+        // HASH ROUTING
+        function handleRoute() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#article-')) {
+                const id = parseInt(hash.replace('#article-', ''), 10);
+                showArticle(id);
+            } else if (hash.startsWith('#cat-')) {
+                const cat = decodeURIComponent(hash.replace('#cat-', ''));
+                showCategory(cat);
+            } else {
+                showHome();
+            }
+        }
+
+        window.addEventListener('hashchange', handleRoute);
+
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'back-to-home' || e.target.closest('#brand-link')) {
+                e.preventDefault();
+                els.searchInput.value = '';
+                history.pushState('', document.title, window.location.pathname + window.location.search);
+                showHome();
+                window.scrollTo(0, 0);
+            }
+        });
+
+        // LIGHT & DARK MODE
+        const htmlEl = document.documentElement;
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const savedTheme = localStorage.getItem('nodiparar-theme');
+
+        function applyTheme(theme) {
+            htmlEl.setAttribute('data-theme', theme);
+            els.themeToggle.textContent = theme === 'dark' ? 'লাইট মোড' : 'ডার্ক মোড';
+        }
+
+        applyTheme(savedTheme || (systemDark ? 'dark' : 'light'));
+
+        els.themeToggle.addEventListener('click', () => {
+            const nextTheme = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('nodiparar-theme', nextTheme);
+            applyTheme(nextTheme);
+        });
+
+        // INITIALIZE
+        renderNav();
+        renderTicker();
+        renderHomepage();
+        renderCategorySections();
+        handleRoute();
+    </script>
+</body>
+</html>
